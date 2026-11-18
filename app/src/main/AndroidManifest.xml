@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Read the system call log (incoming / outgoing / missed, number, date, duration) -->
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <!-- Detect ringing / off-hook / idle so recording can start & stop automatically -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- Optional: resolve numbers to contact names -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!-- Microphone access for recording (works only where the OS/OEM allows it, see README) -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Foreground service so recording survives while the app is in the background -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <!-- Show the "recording" / status notification on Android 13+ -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:allowBackup="true"
+        android:label="Call Tracker"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.CallTracker">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Fires on every phone-state change (ring / answer / hang up) -->
+        <receiver
+            android:name=".recording.PhoneStateReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Foreground service that performs the recording attempt -->
+        <service
+            android:name=".recording.CallRecordingService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+    </application>
+</manifest>
